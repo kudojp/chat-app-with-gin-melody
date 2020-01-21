@@ -21,6 +21,14 @@ func Run() {
         c.HTML(http.StatusOK, "room.html", gin.H{"Name": c.Param("name")})
     })
 
+    // websocket通信はGETでとれ、データはContextに入るらしい
+    r.GET("/room/:name/ws", func(c *gin.Context){
+        // Upgrade HTTP request to WebSocket connection
+        // and dispatch
+        // m.HandleMessageを呼んでいる、、、？
+        m.HandleRequest(c.Writer, c.Request)
+    })
+
 	// クライアントから文字列を受信した時に行う処理
 	m.HandleMessage(func(s *melody.Session, msg []byte){
 		// 送られてきたmsgをサーバとつながっているクライアントに送信
