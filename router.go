@@ -29,14 +29,14 @@ func Run() {
         m.HandleRequest(c.Writer, c.Request)
     })
 
-	// クライアントから文字列を受信した時に行う処理
-	m.HandleMessage(func(s *melody.Session, msg []byte){
-		// 送られてきたmsgをサーバとつながっているクライアントに送信
-		m.BroadcastFilter(msg, func(q *melody.Session) bool {
-			//　あるセッションqが現在のクライアントとセッションsと同じ部屋かのboolを返す
-			return q.Request.URL.Path == s.Request.URL.Path
-		})
+    // クライアントから文字列を受信した時に行う処理
+    m.HandleMessage(func(s *melody.Session, msg []byte){
+	// 送られてきたmsgをサーバとつながっているクライアントに送信
+	m.BroadcastFilter(msg, func(q *melody.Session) bool {
+	    //　あるセッションqが現在のクライアントとセッションsと同じ部屋かのboolを返す
+	    return q.Request.URL.Path == s.Request.URL.Path
 	})
+    })
 
-	r.Run(":8080")
+    r.Run(":8080")
 }
