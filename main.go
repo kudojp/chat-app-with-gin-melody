@@ -1,4 +1,4 @@
-package chat
+package main
 
 import (
     "github.com/gin-gonic/gin"
@@ -6,25 +6,26 @@ import (
     "net/http"
 )
 
-func Run() {
+func main() {
     r := gin.Default()
     m := melody.New()
 
     r.Static("/static", "./view/static")
     r.LoadHTMLGlob("view/*.html")
 
+    // トップページ
     r.GET("/", func(c *gin.Context) {
         c.HTML(http.StatusOK, "index.html", gin.H{})
     })
 
+    // ルームページ
 	r.GET("/room/:name", func(c *gin.Context) {
         c.HTML(http.StatusOK, "room.html", gin.H{"Name": c.Param("name")})
     })
 
     // websocket通信はGETでとれ、データはContextに入るらしい
     r.GET("/room/:name/ws", func(c *gin.Context){
-        // Upgrade HTTP request to WebSocket connection
-        // and dispatch
+        // Upgrade HTTP request to WebSocket connection　and dispatch
         // m.HandleMessageを呼んでいる、、、？
         m.HandleRequest(c.Writer, c.Request)
     })
