@@ -27,3 +27,49 @@ $ go run cmd/main.go
 - トークルームに「JoinRoom」ページを介さずにアクセスできてしまう。この場合、ユーザ名は"null"になる。(ローカルストレージに user 名が保存されていればその名前になる)
 - 発言者のプロフィール画像が現段階では登録できず NotFound になっている
 - トークのデータ履歴がサーバーサイドで保持されていない
+
+## 作業ログ
+
+本レポジトリのレポを残す。
+方針は以下である。
+
+- バックエンドを最適化するように設定する。つまりログイン認証、DB 設計、API 設計など。フロントエンドは JS の DOM 操作で賄う。
+
+## 1. トーク履歴の永続化
+
+ルーム名をユニークにし、新しくその部屋に入った人はそのトークルームの全ての履歴が見えるようにする。一回のメッセージは１文字以上２００文字以内とし、空白を許可しない。user名は1文字以上１５文字以内とし、空白を許可しない。
+
+# 　現段階でのテーブル設計
+
+Users table
+| カラム名 | データ型 | Key | Extra |
+| ---- | ---- | ---- | ---- |
+| id | int | FK | NOT NULL |
+| name | char | ---- | NOT NULL |
+| icon | ??? | ---- | ---- |
+| created_at | datetime | ---- | NOT NULL |
+| deleted_at | datetime | ---- | ---- |
+
+Rooms table
+| カラム名 | データ型 | Key | Extra |
+| ---- | ---- | ---- | ---- |
+| id | ---- | PK | NOT NULL |
+| created_at | datetime | ---- | NOT NULL |
+| deleted_at | datetime | ---- | ---- |
+
+Messages table
+| カラム名 | データ型 | Key | Extra |
+| ---- | ---- | ---- | ---- |
+| id | int | PK | NOT NULL |
+| user_id | int | FK | NOT NULL |
+| room_id | int | FK | NOT NULL |
+| message | text | ---- | NOT NULL, 1-200文字 |
+| created_at | datetime | ---- | NOT NULL |
+| deleted_at | datetime | ---- | ---- |
+
+Room と User の Many-to-many は後ほど。
+
+## ローカル環境
+MySQLにgo-chatというデータベースを作る。
+
+マイグレーションにはgoosego get bitbucket.org/liamstask/goose/cmd/gooseを使った。
