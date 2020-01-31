@@ -5,7 +5,7 @@ const chat = document.getElementById("chat");
 
 const text = document.getElementById("text");
 
-//wsでデータを受け取った時
+//wsでデータがサーバーから送られてきた時
 ws.onmessage = function(msg) {
   let obj = JSON.parse(msg.data);
   obj.message = escape_html(obj.message);
@@ -41,11 +41,11 @@ text.onkeydown = function(e) {
   }
 };
 
+//wsでデータを送信する
 function send_data() {
   if (text.value == "") return;
   text.value = escape_html(text.value);
   let sendData = `{"name":"${name}","message":"${text.value}"}`;
-  //wsでデータを送信する
   ws.send(sendData);
   text.value = "";
 }
